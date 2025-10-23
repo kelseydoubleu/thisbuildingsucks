@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Flatiron Building / THIS BUILDING SUCKS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: #fafafa;
+            color: #000;
+            padding-bottom: 60px;
+        }
+
+        .hero {
+            position: relative;
+            height: 60vh;
+            overflow: hidden;
+            border-bottom: 3px solid #000;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.85);
+            padding: 20px;
+            border-top: 2px solid #fff;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: #000;
+            color: #fff;
+            border: 2px solid #fff;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .building-title {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .building-meta {
+            color: #ccc;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .meta-bar {
+            background: #f5f5f5;
+            padding: 12px 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #000;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-item {
+            padding: 4px 10px;
+            background: #fff;
+            border: 1px solid #ddd;
+        }
+
+        .verdict-summary {
+            background: #fff;
+            padding: 20px;
+            border-bottom: 2px solid #000;
+        }
+
+        .collective-verdict {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .verdict-large {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .verdict-large.good { color: #2e7d32; }
+        .verdict-large.bad { color: #c62828; }
+        .verdict-large.mid { color: #f57c00; }
+
+        .rating-stats {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .rating-breakdown {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 16px;
+            font-size: 10px;
+        }
+
+        .rating-item {
+            text-transform: uppercase;
+        }
+
+        .rating-count {
+            font-weight: 700;
+            color: #000;
+        }
+
+        .action-bar {
+            background: #fff;
+            padding: 12px 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            border-bottom: 2px solid #000;
+        }
+
+        .action-button {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-button:hover {
+            background: #333;
+        }
+
+        .action-button.secondary {
+            background: #f5f5f5;
+            color: #000;
+            border: 1px solid #ddd;
+        }
+
+        .action-button.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .tabs {
+            background: #fff;
+            display: flex;
+            border-bottom: 2px solid #000;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            border-right: 1px solid #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .tab:last-child {
+            border-right: none;
+        }
+
+        .tab.active {
+            color: #000;
+            background: #f5f5f5;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .overview {
+            background: #fff;
+            padding: 20px;
+            border-bottom: 2px solid #000;
+        }
+
+        .overview-text {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .tag-list {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            font-size: 10px;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            letter-spacing: 0.5px;
+        }
+
+        .facts {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 16px;
+        }
+
+        .fact-row {
+            display: flex;
+            padding: 8px 0;
+            font-size: 11px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .fact-label {
+            width: 120px;
+            color: #999;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .fact-value {
+            flex: 1;
+        }
+
+        .reviews {
+            background: #fff;
+        }
+
+        .reviews-header {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .reviews-count {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .sort-select {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 6px 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .review-card {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            background: #000;
+            font-size: 10px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .review-user {
+            flex: 1;
+        }
+
+        .review-username {
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .review-time {
+            color: #999;
+            font-size: 10px;
+        }
+
+        .review-verdict {
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .review-images {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 12px;
+            overflow-x: auto;
+        }
+
+        .review-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+        }
+
+        .review-text {
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .review-action {
+            background: none;
+            border: none;
+            color: #666;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .review-action:hover {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        .photos-grid {
+            background: #fff;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+        }
+
+        .photo-item {
+            aspect-ratio: 1;
+            object-fit: cover;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+
+        .map-container {
+            background: #fff;
+            padding: 20px;
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 300px;
+            background: #f0f0f0;
+            border: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 16px;
+        }
+
+        .map-address {
+            font-size: 11px;
+            margin-bottom: 16px;
+            line-height: 1.6;
+            text-transform: uppercase;
+        }
+
+        .directions-btn {
+            width: 100%;
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 14px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #000;
+            border-top: 3px solid #000;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #666;
+            text-decoration: none;
+            padding: 4px 20px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .log-btn-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 20px;
+        }
+
+        .log-btn {
+            background: #fff;
+            color: #000;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+
+        .log-label {
+            color: #fff;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <img src="https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=1200" alt="Flatiron" class="hero-image">
+        <button class="back-btn" onclick="location.href='index.html'">←</button>
+        <div class="hero-overlay">
+            <div class="building-title">The Flatiron Building</div>
+            <div class="building-meta">New York, NY</div>
+        </div>
+    </div>
+
+    <div class="meta-bar">
+        <div class="meta-item">Daniel Burnham</div>
+        <div class="meta-item">1902</div>
+        <div class="meta-item">Commercial</div>
+    </div>
+
+    <div class="verdict-summary">
+        <div class="collective-verdict">collective verdict</div>
+        <div class="verdict-large good">doesn't suck</div>
+        <div class="rating-stats">based on 1,247 opinions</div>
+        <div class="rating-breakdown">
+            <div class="rating-item">love it: <span class="rating-count">892</span></div>
+            <div class="rating-item">it's fine: <span class="rating-count">456</span></div>
+            <div class="rating-item">sucks: <span class="rating-count">12</span></div>
+        </div>
+    </div>
+
+    <div class="action-bar">
+        <button class="action-button">log it</button>
+        <button class="action-button secondary">save</button>
+        <button class="action-button secondary">share</button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('overview')">info</button>
+        <button class="tab" onclick="switchTab('photos')">photos</button>
+        <button class="tab" onclick="switchTab('reviews')">reviews</button>
+        <button class="tab" onclick="switchTab('map')">map</button>
+    </div>
+
+    <div class="tab-content active" id="overview">
+        <div class="overview">
+            <p class="overview-text">
+                a steel-framed landmark and one of nyc's most iconic buildings. the triangular shape follows the wedge-shaped lot at the intersection of fifth avenue and broadway. still turns heads over 100 years later.
+            </p>
+
+            <div class="section-title">popular tags</div>
+            <div class="tag-list">
+                <span class="tag">iconic</span>
+                <span class="tag">beaux-arts</span>
+                <span class="tag">nyc</span>
+                <span class="tag">triangular</span>
+                <span class="tag">landmark</span>
+            </div>
+
+            <div class="facts">
+                <div class="section-title">facts</div>
+                <div class="fact-row">
+                    <div class="fact-label">built</div>
+                    <div class="fact-value">1902</div>
+                </div>
+                <div class="fact-row">
+                    <div class="fact-label">architect</div>
+                    <div class="fact-value">Daniel Burnham</div>
+                </div>
+                <div class="fact-row">
+                    <div class="fact-label">height</div>
+                    <div class="fact-value">285 ft / 22 floors</div>
+                </div>
+                <div class="fact-row">
+                    <div class="fact-label">style</div>
+                    <div class="fact-value">Beaux-Arts</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="photos">
+        <div class="photos-grid">
+            <img src="https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=400" class="photo-item">
+            <img src="https://images.unsplash.com/photo-1546005098-1c86a5ef6999?w=400" class="photo-item">
+            <img src="https://images.unsplash.com/photo-1518391846015-55a9cc003b25?w=400" class="photo-item">
+            <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=400" class="photo-item">
+            <img src="https://images.unsplash.com/photo-1514565131-fce0801e5785?w=400" class="photo-item">
+            <img src="https://images.unsplash.com/photo-1560155942-1e2f384e8500?w=400" class="photo-item">
+            <img src="https://images.unsplash.com/photo-1517456793572-1d8efd6dc135?w=400" class="photo-item">
+            <img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400" class="photo-item">
+            <img src="https://images.unsplash.com/photo-1577495917124-ba0873d1bd8c?w=400" class="photo-item">
+        </div>
+    </div>
+
+    <div class="tab-content" id="reviews">
+        <div class="reviews">
+            <div class="reviews-header">
+                <div class="reviews-count">1,247 reviews</div>
+                <select class="sort-select">
+                    <option>recent</option>
+                    <option>most agreed</option>
+                    <option>controversial</option>
+                </select>
+            </div>
+
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="avatar">SC</div>
+                    <div class="review-user">
+                        <div class="review-username">sarah_chen</div>
+                        <div class="review-time">2h ago</div>
+                    </div>
+                    <div class="review-verdict" style="color: #2e7d32;">doesn't suck</div>
+                </div>
+                <div class="review-images">
+                    <img src="https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=200" class="review-image">
+                    <img src="https://images.unsplash.com/photo-1546005098-1c86a5ef6999?w=200" class="review-image">
+                </div>
+                <div class="review-text">
+                    still stops me in my tracks every single time. that corner!!!
+                </div>
+                <div class="review-actions">
+                    <button class="review-action">agree (34)</button>
+                    <button class="review-action">reply (8)</button>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="avatar" style="background: #666;">MA</div>
+                    <div class="review-user">
+                        <div class="review-username">mike_arch</div>
+                        <div class="review-time">1d ago</div>
+                    </div>
+                    <div class="review-verdict" style="color: #f57c00;">kinda sucks</div>
+                </div>
+                <div class="review-text">
+                    iconic sure but the ground floor is literally a starbucks and a bank. they did my boy daniel burnham dirty
+                </div>
+                <div class="review-actions">
+                    <button class="review-action">agree (67)</button>
+                    <button class="review-action">reply (15)</button>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="avatar" style="background: #333;">UB</div>
+                    <div class="review-user">
+                        <div class="review-username">urbanist_bae</div>
+                        <div class="review-time">3d ago</div>
+                    </div>
+                    <div class="review-verdict" style="color: #c62828;">sucks</div>
+                </div>
+                <div class="review-text">
+                    everyone acts like this is god's gift to nyc but it's just... a triangle? we get it?
+                </div>
+                <div class="review-actions">
+                    <button class="review-action">agree (12)</button>
+                    <button class="review-action">reply (45)</button>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="avatar" style="background: #444;">JT</div>
+                    <div class="review-user">
+                        <div class="review-username">jenny_tours</div>
+                        <div class="review-time">5d ago</div>
+                    </div>
+                    <div class="review-verdict" style="color: #2e7d32;">doesn't suck</div>
+                </div>
+                <div class="review-text">
+                    brought my architecture students here and they all gasped. GASPED. when's the last time gen z gasped at anything
+                </div>
+                <div class="review-actions">
+                    <button class="review-action">agree (234)</button>
+                    <button class="review-action">reply (34)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="map">
+        <div class="map-container">
+            <div class="map-placeholder">[map placeholder]</div>
+            <div class="map-address">
+                The Flatiron Building<br>
+                175 5th Ave, New York, NY 10010
+            </div>
+            <button class="directions-btn">get directions</button>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="nav-icon">F</div>
+            <span>feed</span>
+        </a>
+        <a href="explore.html" class="nav-item">
+            <div class="nav-icon">S</div>
+            <span>search</span>
+        </a>
+        <div class="log-btn-container">
+            <div class="log-btn">+</div>
+            <span class="log-label">log</span>
+        </div>
+        <a href="lists.html" class="nav-item">
+            <div class="nav-icon">L</div>
+            <span>lists</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <div class="nav-icon">P</div>
+            <span>profile</span>
+        </a>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+    </script>
+</body>
+</html>
