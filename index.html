@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THIS BUILDING SUCKS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: #fafafa;
+            color: #000;
+            padding-bottom: 60px;
+            line-height: 1.4;
+        }
+
+        /* Header */
+        .header {
+            background: #000;
+            color: #fff;
+            border-bottom: 3px solid #000;
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        .notifications {
+            font-size: 12px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: 1px solid #fff;
+            padding: 4px 8px;
+        }
+
+        .notifications:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        /* Toggle */
+        .feed-toggle {
+            background: #fff;
+            border-bottom: 2px solid #000;
+            display: flex;
+            position: sticky;
+            top: 56px;
+            z-index: 99;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #999;
+            cursor: pointer;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .toggle-btn:last-child {
+            border-right: none;
+        }
+
+        .toggle-btn.active {
+            color: #000;
+            background: #f0f0f0;
+        }
+
+        /* Feed Card */
+        .feed-card {
+            background: #fff;
+            border: 2px solid #000;
+            margin: 16px 12px;
+            max-width: 600px;
+        }
+
+        @media (min-width: 768px) {
+            .feed-card {
+                margin: 16px auto;
+            }
+        }
+
+        .card-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            background: #000;
+            font-size: 10px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username {
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .timestamp {
+            color: #999;
+            font-size: 10px;
+        }
+
+        .building-chip {
+            background: #f5f5f5;
+            padding: 10px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 11px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .building-chip:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .building-name {
+            font-weight: 700;
+        }
+
+        .building-meta {
+            color: #666;
+            font-size: 10px;
+        }
+
+        .card-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .verdict {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .verdict-label {
+            color: #999;
+            font-size: 10px;
+            margin-bottom: 4px;
+        }
+
+        .verdict-value {
+            font-weight: 700;
+        }
+
+        .verdict-value.good {
+            color: #2e7d32;
+        }
+
+        .verdict-value.bad {
+            color: #c62828;
+        }
+
+        .verdict-value.mid {
+            color: #f57c00;
+        }
+
+        .review-text {
+            padding: 16px;
+            font-size: 13px;
+            line-height: 1.6;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tags {
+            padding: 12px 16px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tag {
+            font-size: 10px;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            letter-spacing: 0.5px;
+        }
+
+        .card-actions {
+            padding: 12px 16px;
+            display: flex;
+            gap: 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-btn:hover {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #000;
+            border-top: 3px solid #000;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #666;
+            text-decoration: none;
+            padding: 4px 20px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item.active {
+            color: #fff;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .nav-item.active .nav-icon {
+            border-color: #fff;
+            background: #fff;
+            color: #000;
+        }
+
+        .log-btn-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 20px;
+        }
+
+        .log-btn {
+            background: #fff;
+            color: #000;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+
+        .log-label {
+            color: #fff;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">this building sucks</div>
+        <div class="notifications">inbox</div>
+    </div>
+
+    <div class="feed-toggle">
+        <button class="toggle-btn active">following</button>
+        <button class="toggle-btn">trending</button>
+    </div>
+
+    <div class="feed-card">
+        <div class="card-header">
+            <div class="avatar">SC</div>
+            <div class="user-info">
+                <div class="username">sarah_chen</div>
+                <div class="timestamp">2h ago</div>
+            </div>
+        </div>
+        
+        <div class="building-chip" onclick="location.href='building.html'">
+            <span class="building-name">The Flatiron Building</span>
+            <span class="building-meta"> / NYC / 1902</span>
+        </div>
+
+        <img src="https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=800" alt="Flatiron" class="card-image" onclick="location.href='building.html'">
+
+        <div class="verdict">
+            <div class="verdict-label">verdict</div>
+            <div class="verdict-value good">doesn't suck</div>
+        </div>
+
+        <div class="review-text">
+            still the most photographed building in nyc but honestly? deserved. that corner is doing SO much work
+        </div>
+
+        <div class="card-actions">
+            <button class="action-btn">agree (34)</button>
+            <button class="action-btn">comments (8)</button>
+            <button class="action-btn">save</button>
+        </div>
+    </div>
+
+    <div class="feed-card">
+        <div class="card-header">
+            <div class="avatar" style="background: #666;">MA</div>
+            <div class="user-info">
+                <div class="username">mike_arch</div>
+                <div class="timestamp">5h ago</div>
+            </div>
+        </div>
+        
+        <div class="building-chip" onclick="location.href='building.html'">
+            <span class="building-name">Habitat 67</span>
+            <span class="building-meta"> / Montreal / 1967</span>
+        </div>
+
+        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800" alt="Habitat 67" class="card-image">
+
+        <div class="verdict">
+            <div class="verdict-label">verdict</div>
+            <div class="verdict-value mid">kinda sucks</div>
+        </div>
+
+        <div class="review-text">
+            looks cool in photos but imagine actually living here. where do you put your couch?? why is everything concrete??? moshe safdie you absolute maniac
+        </div>
+
+        <div class="tags">
+            <span class="tag">brutalist</span>
+            <span class="tag">impractical</span>
+            <span class="tag">photogenic</span>
+        </div>
+
+        <div class="card-actions">
+            <button class="action-btn">agree (89)</button>
+            <button class="action-btn">comments (23)</button>
+            <button class="action-btn">save</button>
+        </div>
+    </div>
+
+    <div class="feed-card">
+        <div class="card-header">
+            <div class="avatar" style="background: #333;">JK</div>
+            <div class="user-info">
+                <div class="username">jen_k</div>
+                <div class="timestamp">8h ago</div>
+            </div>
+        </div>
+        
+        <div class="building-chip" onclick="location.href='building.html'">
+            <span class="building-name">432 Park Avenue</span>
+            <span class="building-meta"> / NYC / 2015</span>
+        </div>
+
+        <img src="https://images.unsplash.com/photo-1537211261-20c1e6cee288?w=800" alt="432 Park" class="card-image">
+
+        <div class="verdict">
+            <div class="verdict-label">verdict</div>
+            <div class="verdict-value bad">really sucks</div>
+        </div>
+
+        <div class="review-text">
+            a middle finger to the skyline. $95M apartments that creak in the wind. billionaires literally sued over how much it sways lmaooo
+        </div>
+
+        <div class="card-actions">
+            <button class="action-btn">agree (234)</button>
+            <button class="action-btn">comments (67)</button>
+            <button class="action-btn">save</button>
+        </div>
+    </div>
+
+    <div class="feed-card">
+        <div class="card-header">
+            <div class="avatar" style="background: #444;">DB</div>
+            <div class="user-info">
+                <div class="username">david_builds</div>
+                <div class="timestamp">12h ago</div>
+            </div>
+        </div>
+        
+        <div class="building-chip" onclick="location.href='building.html'">
+            <span class="building-name">The Vessel</span>
+            <span class="building-meta"> / Hudson Yards / 2019</span>
+        </div>
+
+        <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800" alt="Vessel" class="card-image">
+
+        <div class="verdict">
+            <div class="verdict-label">verdict</div>
+            <div class="verdict-value bad">definitely sucks</div>
+        </div>
+
+        <div class="review-text">
+            instagram's favorite shawarma. costs $200M, you can't even sit down, and it's literally just stairs to nowhere. peak hudson yards energy
+        </div>
+
+        <div class="tags">
+            <span class="tag">overhyped</span>
+            <span class="tag">corporate art</span>
+        </div>
+
+        <div class="card-actions">
+            <button class="action-btn">agree (456)</button>
+            <button class="action-btn">comments (124)</button>
+            <button class="action-btn">save</button>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item active">
+            <div class="nav-icon">F</div>
+            <span>feed</span>
+        </a>
+        <a href="explore.html" class="nav-item">
+            <div class="nav-icon">S</div>
+            <span>search</span>
+        </a>
+        <div class="log-btn-container">
+            <div class="log-btn">+</div>
+            <span class="log-label">log</span>
+        </div>
+        <a href="lists.html" class="nav-item">
+            <div class="nav-icon">L</div>
+            <span>lists</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <div class="nav-icon">P</div>
+            <span>profile</span>
+        </a>
+    </div>
+
+    <script>
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
