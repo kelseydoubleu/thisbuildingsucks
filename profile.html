@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile / THIS BUILDING SUCKS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: #fafafa;
+            color: #000;
+            padding-bottom: 60px;
+        }
+
+        .header {
+            background: #000;
+            color: #fff;
+            border-bottom: 3px solid #000;
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .username-header {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .settings-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 6px 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .profile-header {
+            background: #fff;
+            padding: 24px 20px;
+            border-bottom: 2px solid #000;
+            text-align: center;
+        }
+
+        .avatar-large {
+            width: 80px;
+            height: 80px;
+            background: #000;
+            margin: 0 auto 12px;
+            font-size: 32px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .profile-username {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .profile-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .profile-bio {
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .profile-location {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .profile-link {
+            font-size: 10px;
+            color: #000;
+            text-decoration: underline;
+            margin-bottom: 16px;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .edit-btn {
+            width: 100%;
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 12px;
+            text-transform: uppercase;
+        }
+
+        .edit-btn:hover {
+            background: #333;
+        }
+
+        .stats {
+            background: #fff;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        .section {
+            background: #fff;
+            margin: 16px 12px;
+            padding: 20px;
+            border: 2px solid #000;
+            max-width: 600px;
+        }
+
+        @media (min-width: 768px) {
+            .section {
+                margin: 16px auto;
+            }
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .highlights {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-bottom: 24px;
+        }
+
+        .highlight-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+
+        .year-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: #f5f5f5;
+            padding: 20px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .stat-card-number {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-card-label {
+            font-size: 9px;
+            color: #999;
+            text-transform: uppercase;
+            line-height: 1.4;
+        }
+
+        .stat-card-tags {
+            background: #f5f5f5;
+            padding: 20px;
+            border: 1px solid #ddd;
+            grid-column: 1 / -1;
+        }
+
+        .top-tags {
+            font-size: 11px;
+            line-height: 1.6;
+            text-transform: uppercase;
+        }
+
+        .tabs {
+            background: #fff;
+            display: flex;
+            border-bottom: 2px solid #000;
+            position: sticky;
+            top: 56px;
+            z-index: 99;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            border-right: 1px solid #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .tab:last-child {
+            border-right: none;
+        }
+
+        .tab.active {
+            color: #000;
+            background: #f5f5f5;
+        }
+
+        .grid {
+            background: #fff;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+        }
+
+        .grid-item {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .grid-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border: 1px solid #ddd;
+        }
+
+        .grid-verdict {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            padding: 4px 8px;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #000;
+            border-top: 3px solid #000;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #666;
+            text-decoration: none;
+            padding: 4px 20px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item.active {
+            color: #fff;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .nav-item.active .nav-icon {
+            border-color: #fff;
+            background: #fff;
+            color: #000;
+        }
+
+        .log-btn-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 20px;
+        }
+
+        .log-btn {
+            background: #fff;
+            color: #000;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+
+        .log-label {
+            color: #fff;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="username-header">@your_handle</div>
+        <button class="settings-btn">settings</button>
+    </div>
+
+    <div class="profile-header">
+        <div class="avatar-large">SC</div>
+        <div class="profile-username">@your_handle</div>
+        <div class="profile-name">sarah chen</div>
+        <div class="profile-bio">architecture enthusiast<br>love brutalism & postmodernism</div>
+        <div class="profile-location">brooklyn, ny</div>
+        <a href="#" class="profile-link">sarahchen.com</a>
+        <button class="edit-btn">edit profile</button>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number">342</div>
+            <div class="stat-label">logs</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">89</div>
+            <div class="stat-label">lists</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">1,203</div>
+            <div class="stat-label">buildings</div>
+        </div>
+    </div>
+
+    <div class="stats" style="border-bottom: 2px solid #000;">
+        <div class="stat">
+            <div class="stat-number">456</div>
+            <div class="stat-label">following</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">892</div>
+            <div class="stat-label">followers</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">highlights</div>
+        <div class="highlights">
+            <img src="https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=300" class="highlight-image">
+            <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=300" class="highlight-image">
+            <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?w=300" class="highlight-image">
+            <img src="https://images.unsplash.com/photo-1537211261-20c1e6cee288?w=300" class="highlight-image">
+            <img src="https://images.unsplash.com/photo-1518899278-82e4ad6a0a9f?w=300" class="highlight-image">
+            <img src="https://images.unsplash.com/photo-1565008576549-57569a49371d?w=300" class="highlight-image">
+        </div>
+
+        <div class="section-title">your year so far</div>
+        <div class="year-stats">
+            <div class="stat-card">
+                <div class="stat-card-number">342</div>
+                <div class="stat-card-label">buildings<br>logged</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-number">47</div>
+                <div class="stat-card-label">cities<br>visited</div>
+            </div>
+            <div class="stat-card-tags">
+                <div class="stat-card-label" style="margin-bottom: 8px;">top tags</div>
+                <div class="top-tags">brutalist • cozy • iconic</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active">logs</button>
+        <button class="tab">lists</button>
+        <button class="tab">saved</button>
+    </div>
+
+    <div class="grid">
+        <div class="grid-item" onclick="location.href='building.html'">
+            <img src="https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=300" class="grid-image">
+            <div class="grid-verdict">doesn't suck</div>
+        </div>
+        <div class="grid-item">
+            <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=300" class="grid-image">
+            <div class="grid-verdict">doesn't suck</div>
+        </div>
+        <div class="grid-item">
+            <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?w=300" class="grid-image">
+            <div class="grid-verdict">really sucks</div>
+        </div>
+        <div class="grid-item">
+            <img src="https://images.unsplash.com/photo-1537211261-20c1e6cee288?w=300" class="grid-image">
+            <div class="grid-verdict">definitely sucks</div>
+        </div>
+        <div class="grid-item">
+            <img src="https://images.unsplash.com/photo-1518899278-82e4ad6a0a9f?w=300" class="grid-image">
+            <div class="grid-verdict">kinda sucks</div>
+        </div>
+        <div class="grid-item">
+            <img src="https://images.unsplash.com/photo-1565008576549-57569a49371d?w=300" class="grid-image">
+            <div class="grid-verdict">it's fine</div>
+        </div>
+        <div class="grid-item">
+            <img src="https://images.unsplash.com/photo-1580757468214-c73f7062a5cb?w=300" class="grid-image">
+            <div class="grid-verdict">doesn't suck</div>
+        </div>
+        <div class="grid-item">
+            <img src="https://images.unsplash.com/photo-1577201713672-2f2f879d3312?w=300" class="grid-image">
+            <div class="grid-verdict">doesn't suck</div>
+        </div>
+        <div class="grid-item">
+            <img src="https://images.unsplash.com/photo-1486718448742-163732cd1544?w=300" class="grid-image">
+            <div class="grid-verdict">doesn't suck</div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="nav-icon">F</div>
+            <span>feed</span>
+        </a>
+        <a href="explore.html" class="nav-item">
+            <div class="nav-icon">S</div>
+            <span>search</span>
+        </a>
+        <div class="log-btn-container">
+            <div class="log-btn">+</div>
+            <span class="log-label">log</span>
+        </div>
+        <a href="lists.html" class="nav-item">
+            <div class="nav-icon">L</div>
+            <span>lists</span>
+        </a>
+        <a href="profile.html" class="nav-item active">
+            <div class="nav-icon">P</div>
+            <span>profile</span>
+        </a>
+    </div>
+
+    <script>
+        document.querySelectorAll('.tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
