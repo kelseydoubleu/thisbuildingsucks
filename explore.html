@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search / THIS BUILDING SUCKS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: #fafafa;
+            color: #000;
+            padding-bottom: 60px;
+        }
+
+        .header {
+            background: #000;
+            color: #fff;
+            border-bottom: 3px solid #000;
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        .search-input {
+            flex: 1;
+            background: #fff;
+            border: 2px solid #fff;
+            padding: 10px 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        .map-toggle {
+            background: #fff;
+            border: none;
+            width: 42px;
+            font-size: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .filter-tabs {
+            background: #fff;
+            display: flex;
+            border-bottom: 2px solid #000;
+            position: sticky;
+            top: 56px;
+            z-index: 99;
+        }
+
+        .filter-tab {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            border-right: 1px solid #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .filter-tab:last-child {
+            border-right: none;
+        }
+
+        .filter-tab.active {
+            color: #000;
+            background: #f5f5f5;
+        }
+
+        .filters-bar {
+            background: #fff;
+            padding: 12px 20px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .filters-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-chip {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 6px 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .filter-chip.active {
+            background: #000;
+            color: #fff;
+            border-color: #000;
+        }
+
+        .section {
+            background: #fff;
+            margin: 16px 12px;
+            padding: 20px;
+            border: 2px solid #000;
+            max-width: 600px;
+        }
+
+        @media (min-width: 768px) {
+            .section {
+                margin: 16px auto;
+            }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .see-all {
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            border-bottom: 1px solid #000;
+        }
+
+        .horizontal-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .building-chip-large {
+            min-width: 120px;
+            background: #f5f5f5;
+            padding: 16px 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .building-chip-large:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .chip-name {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .chip-distance {
+            font-size: 9px;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        .building-chip-large:hover .chip-distance {
+            color: #ccc;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .grid-item {
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background: #fff;
+        }
+
+        .grid-item:hover {
+            border-color: #000;
+        }
+
+        .grid-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .grid-info {
+            padding: 12px;
+        }
+
+        .grid-name {
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .grid-location {
+            font-size: 9px;
+            color: #999;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .grid-verdict {
+            font-size: 9px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .grid-verdict.good { color: #2e7d32; }
+        .grid-verdict.bad { color: #c62828; }
+        .grid-verdict.mid { color: #f57c00; }
+
+        .grid-count {
+            color: #999;
+            font-size: 9px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #000;
+            border-top: 3px solid #000;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #666;
+            text-decoration: none;
+            padding: 4px 20px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item.active {
+            color: #fff;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .nav-item.active .nav-icon {
+            border-color: #fff;
+            background: #fff;
+            color: #000;
+        }
+
+        .log-btn-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 20px;
+        }
+
+        .log-btn {
+            background: #fff;
+            color: #000;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+
+        .log-label {
+            color: #fff;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="search buildings...">
+            <button class="map-toggle">map</button>
+        </div>
+    </div>
+
+    <div class="filter-tabs">
+        <button class="filter-tab active">places</button>
+        <button class="filter-tab">people</button>
+        <button class="filter-tab">tags</button>
+    </div>
+
+    <div class="filters-bar">
+        <button class="filter-chip">distance</button>
+        <button class="filter-chip">type</button>
+        <button class="filter-chip">era</button>
+        <button class="filter-chip">style</button>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">nearby</div>
+            <div class="see-all">see all</div>
+        </div>
+        <div class="horizontal-scroll">
+            <div class="building-chip-large" onclick="location.href='building.html'">
+                <div class="chip-name">Empire State</div>
+                <div class="chip-distance">0.3 mi</div>
+            </div>
+            <div class="building-chip-large" onclick="location.href='building.html'">
+                <div class="chip-name">NYPL</div>
+                <div class="chip-distance">0.5 mi</div>
+            </div>
+            <div class="building-chip-large" onclick="location.href='building.html'">
+                <div class="chip-name">Grand Central</div>
+                <div class="chip-distance">0.6 mi</div>
+            </div>
+            <div class="building-chip-large" onclick="location.href='building.html'">
+                <div class="chip-name">MoMA</div>
+                <div class="chip-distance">0.8 mi</div>
+            </div>
+            <div class="building-chip-large" onclick="location.href='building.html'">
+                <div class="chip-name">Chrysler</div>
+                <div class="chip-distance">0.9 mi</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">buildings that suck</div>
+        </div>
+        <div class="grid">
+            <div class="grid-item" onclick="location.href='building.html'">
+                <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400" class="grid-image">
+                <div class="grid-info">
+                    <div class="grid-name">The Vessel</div>
+                    <div class="grid-location">Hudson Yards, NYC</div>
+                    <div class="grid-verdict bad">definitely sucks <span class="grid-count">(234)</span></div>
+                </div>
+            </div>
+            <div class="grid-item" onclick="location.href='building.html'">
+                <img src="https://images.unsplash.com/photo-1537211261-20c1e6cee288?w=400" class="grid-image">
+                <div class="grid-info">
+                    <div class="grid-name">432 Park Ave</div>
+                    <div class="grid-location">NYC</div>
+                    <div class="grid-verdict bad">really sucks <span class="grid-count">(156)</span></div>
+                </div>
+            </div>
+            <div class="grid-item" onclick="location.href='building.html'">
+                <img src="https://images.unsplash.com/photo-1518899278-82e4ad6a0a9f?w=400" class="grid-image">
+                <div class="grid-info">
+                    <div class="grid-name">The Shed</div>
+                    <div class="grid-location">Hudson Yards, NYC</div>
+                    <div class="grid-verdict mid">kinda sucks <span class="grid-count">(89)</span></div>
+                </div>
+            </div>
+            <div class="grid-item" onclick="location.href='building.html'">
+                <img src="https://images.unsplash.com/photo-1565008576549-57569a49371d?w=400" class="grid-image">
+                <div class="grid-info">
+                    <div class="grid-name">Oculus</div>
+                    <div class="grid-location">WTC, NYC</div>
+                    <div class="grid-verdict mid">it's fine <span class="grid-count">(203)</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">buildings that don't suck</div>
+            <div class="see-all">see all</div>
+        </div>
+        <div class="grid">
+            <div class="grid-item" onclick="location.href='building.html'">
+                <img src="https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=400" class="grid-image">
+                <div class="grid-info">
+                    <div class="grid-name">Flatiron</div>
+                    <div class="grid-location">Manhattan, NYC</div>
+                    <div class="grid-verdict good">doesn't suck <span class="grid-count">(1247)</span></div>
+                </div>
+            </div>
+            <div class="grid-item" onclick="location.href='building.html'">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400" class="grid-image">
+                <div class="grid-info">
+                    <div class="grid-name">Habitat 67</div>
+                    <div class="grid-location">Montreal</div>
+                    <div class="grid-verdict good">doesn't suck <span class="grid-count">(567)</span></div>
+                </div>
+            </div>
+            <div class="grid-item" onclick="location.href='building.html'">
+                <img src="https://images.unsplash.com/photo-1486718448742-163732cd1544?w=400" class="grid-image">
+                <div class="grid-info">
+                    <div class="grid-name">Barbican</div>
+                    <div class="grid-location">London</div>
+                    <div class="grid-verdict good">doesn't suck <span class="grid-count">(892)</span></div>
+                </div>
+            </div>
+            <div class="grid-item" onclick="location.href='building.html'">
+                <img src="https://images.unsplash.com/photo-1580757468214-c73f7062a5cb?w=400" class="grid-image">
+                <div class="grid-info">
+                    <div class="grid-name">Trellick Tower</div>
+                    <div class="grid-location">London</div>
+                    <div class="grid-verdict good">doesn't suck <span class="grid-count">(342)</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="nav-icon">F</div>
+            <span>feed</span>
+        </a>
+        <a href="explore.html" class="nav-item active">
+            <div class="nav-icon">S</div>
+            <span>search</span>
+        </a>
+        <div class="log-btn-container">
+            <div class="log-btn">+</div>
+            <span class="log-label">log</span>
+        </div>
+        <a href="lists.html" class="nav-item">
+            <div class="nav-icon">L</div>
+            <span>lists</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <div class="nav-icon">P</div>
+            <span>profile</span>
+        </a>
+    </div>
+
+    <script>
+        document.querySelectorAll('.filter-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                chip.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
